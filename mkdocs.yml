@@ -1,0 +1,22 @@
+site_name: MVC Project Documentation
+site_url: https://www.mkdocs.org/
+site_description: Project documentation with Markdown.
+site_author: Manuele Mauricio
+
+repo_url: https://github.com/mkdocs/mkdocs/
+edit_uri: blob/master/docs/
+
+theme:
+  name: mkdocs
+  locale: en
+  analytics: { gtag: "G-274394082" }
+  highlightjs: true
+  hljs_languages:
+    - yaml
+    - django
+
+plugins:
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [apps]
