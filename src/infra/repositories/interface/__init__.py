@@ -1,0 +1,1 @@
+from src.infra.repositories.interface.i_users_repository import IUserRepository
