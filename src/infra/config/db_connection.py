@@ -7,7 +7,7 @@ Base = declarative_base()
 
 class DataBaseConnectionHandler:
     """
-    Class responsible for connecting database and api
+    Class responsible for connecting database in the api
     """
 
     def __init__(self):
@@ -22,10 +22,10 @@ class DataBaseConnectionHandler:
         return self.__connection_string
 
     def __enter__(self):
-        db_connection = create_engine(self.__connection_string)
+        db_connection = self.get_engine()
         session_maker = sessionmaker()
         self.session = session_maker(bind=db_connection)
-        return self
+        return self.session
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.session.close()
