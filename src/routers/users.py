@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
-from fastapi import APIRouter, HTTPException, status
+import sqlalchemy
+from fastapi import APIRouter, HTTPException, Response, status
 
 from src.infra.config.db_connection import DataBaseConnectionHandler
 from src.infra.models.users import User
@@ -47,7 +48,7 @@ class UserRouters(IUserRouters):
     @router.get("/users/id", status_code=status.HTTP_200_OK, response_model=UserSchema)
     def search_by_id(user_id: int):
         user = UserRepository().get_by_id(user_id)
-        if len(user) <= 0:
+        if not isinstance(user, User):
             HTTPException(
                 detail="Não foi encontrado nenhum usuário.",
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -57,10 +58,14 @@ class UserRouters(IUserRouters):
     @router.patch("/users", status_code=status.HTTP_200_OK)
     def partial_update(user_id: int, data: UserUpdateSchema):
         user_updated = UserRepository().partial_update(user_id, data)
+        if not isinstance(user_updated, sqlalchemy.sql.dml.Update):
+            HTTPException(
+                detail="Não foi possível atualizar o usuário",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
         return user_updated
 
     @router.delete("/users", status_code=status.HTTP_200_OK)
     def delete(delete_user_id: int):
-        user_instance = UserRepository().get_by_id(delete_user_id)
-        UserRepository().delete(user_instance)
-        return user_instance
+        user_deleted = UserRepository().delete(delete_user_id)
+        return user_deleted
