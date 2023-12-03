@@ -53,3 +53,18 @@ class UserLogin(BaseModel):
 
     email: str
     password: str
+
+
+class AccessToken(BaseModel):
+    """
+    This class is a schema used for returning the token
+
+    Attributes:
+        id (int): This camp is an int which represents the id
+        email (str): this camp is a string which represents the email
+        token (str): this camp is a string that represents the token
+    """
+
+    id: int
+    email: str
+    access: str
