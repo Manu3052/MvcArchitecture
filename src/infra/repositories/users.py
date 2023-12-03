@@ -1,4 +1,4 @@
-from sqlalchemy import update
+from sqlalchemy import delete, update
 from sqlalchemy.orm import Session
 
 from src.infra.config import DataBaseConnectionHandler
@@ -12,7 +12,7 @@ class UserRepository(IUserRepository):
     This class represents the layer responsible for operations on the database.
 
     Params:
-        IUserRepository (ABC): Inherits all the methods from the class IUserRepository
+        IUserRepository (ABC): Apply the interface of UserRepository
 
     Attributes:
         database (session):
@@ -33,7 +33,7 @@ class UserRepository(IUserRepository):
 
         """
         try:
-            new_user = User(name=data.name, password=data.password)
+            new_user = User(name=data.name, password=data.password, email=data.email)
             self.database.add(new_user)
             self.database.commit()
             return new_user
@@ -72,6 +72,19 @@ class UserRepository(IUserRepository):
         finally:
             self.database.close()
 
+    def get_by_email(self, email: str) -> User:
+        """
+        This method is responsible for searching an user by its email
+
+        Attributes:
+            email (str): Receives an
+        """
+        try:
+            user = self.database.query(User).filter(User.email == email).first()
+            return user
+        finally:
+            self.database.close()
+
     def partial_update(self, user_id: int, data: dict):
         """
         This method is responsible for updating tbe user
@@ -91,15 +104,16 @@ class UserRepository(IUserRepository):
         finally:
             self.database.close()
 
-    def delete(self, user_instance: User):
+    def delete(self, user_id: int):
         """
         This method is responsible for deleting existing users.
 
         Attributes:
-            user_instance (User): Receives an instance from User
+            user_id (int): Receives an int that represents the user's id
         """
         try:
-            self.database.delete(user_instance)
+            deleted_user = delete(User).where(User.id == user_id)
+            self.database.execute(deleted_user)
             self.database.commit()
         finally:
             self.database.close()
