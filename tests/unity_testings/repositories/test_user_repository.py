@@ -19,8 +19,14 @@ class TestUserRepository:
         """
         This method tests the method create and it should be successful.
         """
-        data = {"name": "Jonh Doe", "password": "Abracadabra"}
-        data = CreateUserSchema(name=data["name"], password=data["password"])
+        data = {
+            "name": "Jonh Doe",
+            "password": "Abracadabra",
+            "email": "jhondoe@email.com",
+        }
+        data = CreateUserSchema(
+            name=data["name"], password=data["password"], email=data["email"]
+        )
 
         engine = db_connection_handler.get_engine().connect()
         new_user = user_repository.create(data)
@@ -41,11 +47,11 @@ class TestUserRepository:
         engine = db_connection_handler.get_engine().connect()
         mocked_name = "Jane Doe"
         mocked_password = "Password"
+        mocked_email = "jhondoe@email.com"
         sql = """
-            INSERT INTO users (name, password) VALUES ('{}', '{}')
+            INSERT INTO users (name, password, email) VALUES ('{}', '{}', '{}')
         """.format(
-            mocked_name,
-            mocked_password,
+            mocked_name, mocked_password, mocked_email
         )
         engine.execute(text(sql))
         engine.commit()
@@ -66,13 +72,12 @@ class TestUserRepository:
         mocked_id = 90
         mocked_name = "Jane Doe"
         mocked_password = "Password"
+        mocked_email = "jhondoe@email.com"
 
         sql = """
-            INSERT INTO users (id, name, password) VALUES ('{}','{}', '{}')
+            INSERT INTO users (id, name, password, email) VALUES ('{}','{}', '{}', '{}')
         """.format(
-            mocked_id,
-            mocked_name,
-            mocked_password,
+            mocked_id, mocked_name, mocked_password, mocked_email
         )
         engine.execute(text(sql))
         engine.commit()
@@ -83,7 +88,7 @@ class TestUserRepository:
         engine.commit()
 
         assert mocked_id == response.id
-        assert mocked_password == response.password
+        assert mocked_email == response.email
 
     def test_updating_existing_user(self):
         """
@@ -92,12 +97,12 @@ class TestUserRepository:
         engine = db_connection_handler.get_engine().connect()
         mocked_name = "Jane Doe"
         mocked_password = "Password"
+        mocked_email = "jhondoe@email.com"
 
         sql = """
-            INSERT INTO users (name, password) VALUES ('{}', '{}')
+            INSERT INTO users (name, password, email) VALUES ('{}', '{}', '{}')
         """.format(
-            mocked_name,
-            mocked_password,
+            mocked_name, mocked_password, mocked_email
         )
         engine.execute(text(sql))
         engine.commit()
@@ -126,12 +131,12 @@ class TestUserRepository:
         engine = db_connection_handler.get_engine().connect()
         mocked_name = "Jane Doe"
         mocked_password = "Password"
+        mocked_email = "jhondoe@email.com"
 
         sql = """
-            INSERT INTO users (name, password) VALUES ('{}', '{}')
+            INSERT INTO users (name, password, email) VALUES ('{}', '{}', '{}')
         """.format(
-            mocked_name,
-            mocked_password,
+            mocked_name, mocked_password, mocked_email
         )
         engine.execute(text(sql))
         engine.commit()
