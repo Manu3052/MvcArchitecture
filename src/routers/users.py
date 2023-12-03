@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 
 import sqlalchemy
-from fastapi import APIRouter, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.infra.models.users import User
 from src.infra.providers.hash_provider import hash_generate
 from src.infra.repositories.interface.i_users_repository import IUserRepository
 from src.infra.repositories.users import UserRepository
+from src.routers.auth import AuthRouters
+from src.routers.interface.i_auth import IAuthRouters
 from src.routers.interface.i_users import IUserRouters
 from src.schemas.users import CreateUserSchema, UserSchema, UserUpdateSchema
 
@@ -42,10 +44,10 @@ class UserRouters(IUserRouters):
         return user_create
 
     @router.get(
-        "/users/name", status_code=status.HTTP_200_OK, response_model=list[UserSchema]
+        "/users/", status_code=status.HTTP_200_OK, response_model=list[UserSchema]
     )
-    def search_by_name(user_name: str):
-        user = UserRepository().get_by_name(user_name)
+    def search_by_name(name: str):
+        user = UserRepository().get_by_name(name)
         if len(user) <= 0:
             raise HTTPException(
                 detail="Não foi encontrado nenhum usuário.",
@@ -53,9 +55,11 @@ class UserRouters(IUserRouters):
             )
         return user
 
-    @router.get("/users/id", status_code=status.HTTP_200_OK, response_model=UserSchema)
-    def search_by_id(user_id: int):
-        user = UserRepository().get_by_id(user_id)
+    @router.get(
+        "/users/{id}", status_code=status.HTTP_200_OK, response_model=UserSchema
+    )
+    def search_by_id(id: int):
+        user = UserRepository().get_by_id(id)
         if not isinstance(user, User):
             raise HTTPException(
                 detail="Não foi encontrado nenhum usuário.",
