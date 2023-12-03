@@ -14,6 +14,7 @@ class User(Base):
         id (Integer, primary_key=True, autoincrement=True): Represents the primary key
         name (String, nullable=False): Represents the name of the User
         password (String, nullable=False): Represents the password for accessing the software
+        email (String, nullable=False, unique=True): Represents the email of an user
     """
 
     __tablename__ = "users"
@@ -27,3 +28,4 @@ class User(Base):
         String,
         nullable=False,
     )
+    email = Column(String, nullable=False, unique=True)
