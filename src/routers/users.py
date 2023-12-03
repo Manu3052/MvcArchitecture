@@ -3,8 +3,9 @@ from dataclasses import dataclass
 import sqlalchemy
 from fastapi import APIRouter, HTTPException, Response, status
 
-from src.infra.config.db_connection import DataBaseConnectionHandler
 from src.infra.models.users import User
+from src.infra.providers.hash_provider import hash_generate
+from src.infra.repositories.interface.i_users_repository import IUserRepository
 from src.infra.repositories.users import UserRepository
 from src.routers.interface.i_users import IUserRouters
 from src.schemas.users import CreateUserSchema, UserSchema, UserUpdateSchema
@@ -17,7 +18,7 @@ class UserRouters(IUserRouters):
     """
     This class implements all the users routers.
 
-    Params;
+    Params:
         IUserRouters (Interface): Implements all the methods and rules that must be followed.
     """
 
@@ -25,9 +26,16 @@ class UserRouters(IUserRouters):
         "/users", status_code=status.HTTP_201_CREATED, response_model=UserSchema
     )
     def create(user: CreateUserSchema):
+        verify_email = UserRepository().get_by_email(user.email)
+        if verify_email:
+            raise HTTPException(
+                detail="Esse email já foi cadastrado.",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+        user.password = hash_generate(user.password)
         user_create = UserRepository().create(user)
         if not isinstance(user_create, User):
-            HTTPException(
+            raise HTTPException(
                 detail="Não foi possivel criar um usuário.",
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
@@ -39,7 +47,7 @@ class UserRouters(IUserRouters):
     def search_by_name(user_name: str):
         user = UserRepository().get_by_name(user_name)
         if len(user) <= 0:
-            HTTPException(
+            raise HTTPException(
                 detail="Não foi encontrado nenhum usuário.",
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
@@ -49,7 +57,7 @@ class UserRouters(IUserRouters):
     def search_by_id(user_id: int):
         user = UserRepository().get_by_id(user_id)
         if not isinstance(user, User):
-            HTTPException(
+            raise HTTPException(
                 detail="Não foi encontrado nenhum usuário.",
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
@@ -59,7 +67,7 @@ class UserRouters(IUserRouters):
     def partial_update(user_id: int, data: UserUpdateSchema):
         user_updated = UserRepository().partial_update(user_id, data)
         if not isinstance(user_updated, sqlalchemy.sql.dml.Update):
-            HTTPException(
+            raise HTTPException(
                 detail="Não foi possível atualizar o usuário",
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
