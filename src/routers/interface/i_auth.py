@@ -1,7 +1,12 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordBearer
+
 from src.schemas.users import UserLogin, UserSchema
+
+oauth2_schema = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @dataclass
@@ -17,4 +22,7 @@ class IAuthRouters(ABC):
         Params:
             user (UserLogin): This params
         """
+        pass
+
+    def get_user_logged(token: str = Depends(oauth2_schema)):
         pass
