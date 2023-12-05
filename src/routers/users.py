@@ -21,21 +21,21 @@ class UserRouters(IUserRouters):
     This class implements all the users routers.
 
     Params:
-        IUserRouters (Interface): Implements all the methods and rules that must be followed.
+        IUserRouters (Interface): ImplementAttributeError: module 'bcrypt' has no attribute '__about__'s all the methods and rules that must be followed.
     """
 
     @router.post(
         "/users", status_code=status.HTTP_201_CREATED, response_model=UserSchema
     )
-    def create(user: CreateUserSchema):
-        verify_email = UserRepository().get_by_email(user.email)
+    def create(data: CreateUserSchema, user=Depends(AuthRouters.get_user_logged)):
+        verify_email = UserRepository().get_by_email(data.email)
         if verify_email:
             raise HTTPException(
                 detail="Esse email já foi cadastrado.",
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
-        user.password = hash_generate(user.password)
-        user_create = UserRepository().create(user)
+        data.password = hash_generate(data.password)
+        user_create = UserRepository().create(data)
         if not isinstance(user_create, User):
             raise HTTPException(
                 detail="Não foi possivel criar um usuário.",
@@ -46,7 +46,7 @@ class UserRouters(IUserRouters):
     @router.get(
         "/users/", status_code=status.HTTP_200_OK, response_model=list[UserSchema]
     )
-    def search_by_name(name: str):
+    def search_by_name(name: str, user=Depends(AuthRouters.get_user_logged)):
         user = UserRepository().get_by_name(name)
         if len(user) <= 0:
             raise HTTPException(
@@ -58,7 +58,7 @@ class UserRouters(IUserRouters):
     @router.get(
         "/users/{id}", status_code=status.HTTP_200_OK, response_model=UserSchema
     )
-    def search_by_id(id: int):
+    def search_by_id(id: int, user=Depends(AuthRouters.get_user_logged)):
         user = UserRepository().get_by_id(id)
         if not isinstance(user, User):
             raise HTTPException(
@@ -68,7 +68,9 @@ class UserRouters(IUserRouters):
         return user
 
     @router.patch("/users", status_code=status.HTTP_200_OK)
-    def partial_update(user_id: int, data: UserUpdateSchema):
+    def partial_update(
+        user_id: int, data: UserUpdateSchema, user=Depends(AuthRouters.get_user_logged)
+    ):
         user_updated = UserRepository().partial_update(user_id, data)
         if not isinstance(user_updated, sqlalchemy.sql.dml.Update):
             raise HTTPException(
@@ -78,6 +80,6 @@ class UserRouters(IUserRouters):
         return user_updated
 
     @router.delete("/users", status_code=status.HTTP_200_OK)
-    def delete(delete_user_id: int):
+    def delete(delete_user_id: int, user=Depends(AuthRouters.get_user_logged)):
         user_deleted = UserRepository().delete(delete_user_id)
         return user_deleted
