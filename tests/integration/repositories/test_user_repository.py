@@ -12,7 +12,7 @@ db_connection_handler = DataBaseConnectionHandler()
 @pytest.mark.test_runs_all_repository_user_tests
 class TestUserRepository:
     """
-    This class is responsible for using unity tests to test the UserRepository class
+    This class is responsible for applying integration test on UserRepository class
     """
 
     def test_create_user(self):
@@ -83,6 +83,32 @@ class TestUserRepository:
         engine.commit()
 
         response = user_repository.get_by_id(mocked_id)
+
+        engine.execute(text(f"DELETE FROM users WHERE id='{mocked_id}'"))
+        engine.commit()
+
+        assert mocked_id == response.id
+        assert mocked_email == response.email
+
+    def test_get_existing_user_by_email(self):
+        """
+        Test the method is responsible for searching an existing user by email
+        """
+        engine = db_connection_handler.get_engine().connect()
+        mocked_id = 90
+        mocked_name = "Jane Doe"
+        mocked_password = "Password"
+        mocked_email = "jhondoe@email.com"
+
+        sql = """
+            INSERT INTO users (id, name, password, email) VALUES ('{}','{}', '{}', '{}')
+        """.format(
+            mocked_id, mocked_name, mocked_password, mocked_email
+        )
+        engine.execute(text(sql))
+        engine.commit()
+
+        response = user_repository.get_by_email(mocked_email)
 
         engine.execute(text(f"DELETE FROM users WHERE id='{mocked_id}'"))
         engine.commit()
