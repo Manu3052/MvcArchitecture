@@ -7,6 +7,10 @@ from src.schemas.users import CreateUserSchema, UserLogin, UserSchema, UserUpdat
 
 
 class TestUsersSchema:
+    """
+    This class is responsible for testing all user schemas
+    """
+
     def test_create_user_schema(self):
         """
         This method is responsible for testing the schema CreateUserSchema
@@ -28,6 +32,9 @@ class TestUsersSchema:
             )
 
     def test_user_schema(self):
+        """
+        This method is responsible for testing the schema UserSchema
+        """
         user = UserSchema(
             id=random.randint(10000, 199999),
             name="Jhon Doe",
@@ -37,10 +44,16 @@ class TestUsersSchema:
         assert user.email == "jhon.doe@gmail.com"
 
     def test_user_update_schema(self):
+        """
+        This method is responsible for testing the schema UserUpdateSchema
+        """
         user = UserUpdateSchema(password="Abacadabra")
         assert user.password == "Abacadabra"
 
     def test_user_login(self):
+        """
+        This method is responsible for testing the schema UserLogin
+        """
         user = UserLogin(email="jhon.doe@gmail.com", password="Abacadabra")
         assert user.email == "jhon.doe@gmail.com"
         assert user.password == "Abacadabra"

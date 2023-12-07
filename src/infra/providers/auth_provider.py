@@ -28,5 +28,15 @@ def create_access_token(data: dict) -> str:
 
 
 def verify_access_token(token: str):
+    """
+    This function is responsible for verifying the token
+
+    Params:
+        token (str): Receive a string that represents the token.
+
+    Returns:
+        sub (dict): Returns a dict with the valid data
+    """
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    return payload.get("sub")
+    sub = payload.get("sub")
+    return sub
