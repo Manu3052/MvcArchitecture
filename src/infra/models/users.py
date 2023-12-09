@@ -7,8 +7,8 @@ class User(Base):
     """
     Class representing the model for the table users.
 
-    Params:
-        Base (declarative_base()): Inherits a function that will mirror tbe model in a table
+    Params :
+        Base (declarative_base()): Inherits a function that will mirror the model in a table
 
     Attributes:
         id (Integer, primary_key=True, autoincrement=True): Represents the primary key
