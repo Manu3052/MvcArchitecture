@@ -7,6 +7,7 @@ from jose import JWTError
 from src.infra.providers.auth_provider import create_access_token, verify_access_token
 from src.infra.providers.hash_provider import verify_hash
 from src.infra.repositories.users import UserRepository
+from src.middlewares.auth_middleware import AuthenticationMiddleware
 from src.routers.interface.i_auth import IAuthRouters
 from src.schemas.users import AccessToken, UserLogin, UserSchema
 
@@ -60,7 +61,7 @@ class AuthRouters(IAuthRouters):
     )
     def get_user_logged(token: str = Depends(oauth2_schema)):
         try:
-            email = verify_access_token(token)
+            email = AuthenticationMiddleware().verify_token(token)
             if not email:
                 raise HTTPException(
                     detail="Token inválido", status_code=status.HTTP_401_UNAUTHORIZED
