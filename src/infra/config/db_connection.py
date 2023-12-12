@@ -7,25 +7,36 @@ Base = declarative_base()
 
 class DataBaseConnectionHandler:
     """
-    Class responsible for connecting database in the api
+    Class responsible for handling the database connection
+
+    Attributes:
+        connection_string (str): Receives a string representing the database engine
+        session (sessionmaker()): Receives a session of the database
     """
 
     def __init__(self):
+        """ """
         self.__connection_string = config("SQL_ENGINE")
         self.session = None
 
     def get_engine(self):
+        """
+        This method is responsible for creating the engine
+
+        Return:
+            engine (): Returns the created engine
+        """
         engine = create_engine(self.__connection_string)
         return engine
 
-    def return_engine(self):
-        return self.__connection_string
-
     def __enter__(self):
+        """
+        This method is responsible for opening an sqlalchmey session
+
+        Return:
+            session (sessionmaker()): Receives a session of the database
+        """
         db_connection = self.get_engine()
         session_maker = sessionmaker()
         self.session = session_maker(bind=db_connection)
         return self.session
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.session.close()

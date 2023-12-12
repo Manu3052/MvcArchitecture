@@ -62,7 +62,7 @@ class AccessToken(BaseModel):
     Attributes:
         id (int): This camp is an int which represents the id
         email (str): this camp is a string which represents the email
-        token (str): this camp is a string that represents the token
+        access (str): this camp is a string that represents the token
     """
 
     id: int

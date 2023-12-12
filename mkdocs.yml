@@ -1,6 +1,5 @@
 site_name: MVC Project Documentation
-site_url: https://www.mkdocs.org/
-site_description: Project documentation with Markdown.
+site_description: Technical documentation
 site_author: Manuele Mauricio
 
 repo_url: https://github.com/mkdocs/mkdocs/
