@@ -83,3 +83,19 @@ For running the project you must run:
 ```
     uvicorn server:app --reload --port 8080
 ```
+
+### Docker
+
+This project has support to docker, so if you want to run use:
+
+Build:
+
+```
+    docker build -t mvc-python
+```
+
+Run:
+
+```
+    docker run -it mvc-python
+```
